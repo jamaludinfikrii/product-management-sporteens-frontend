@@ -1,8 +1,43 @@
+import Axios from 'axios'
 import React, { Component } from 'react'
+import Swal from 'sweetalert2'
 
 export class InsertProduct extends Component {
     state ={
         images : null
+    }
+
+    onSubmitBtnClick = () => {
+        let data = {
+            name : this.name.value,
+            price : this.price.value
+        }
+
+        try {
+            if(!data.name || !data.price) throw new Error("Name And Price must be filled")
+            if(this.state.images === null || this.state.images.length === 0) throw new Error("You must select at least 1 image !!")
+
+            let fd = new FormData()
+            data = JSON.stringify(data)
+            
+            fd.append('data',data)
+            for(var i = 0 ; i < this.state.images.length ; i ++){
+                fd.append('images',this.state.images[i])
+            }
+
+            Axios.post('http://localhost:5000/products-2',fd)
+            .then((res) => {
+                console.log(res)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+
+
+
+        } catch (error) {
+            Swal.fire('Error',error.message,'error')
+        }
     }
 
     onChangeImageHandler = (e) => {
@@ -27,11 +62,11 @@ export class InsertProduct extends Component {
                 <div className='col-md-4'>
                     <div className='border rounded shadow p-4'>
                         <p>Insert Your Product</p>
-                        <input type='text' placeholder='Product Name' className='form-control mt-3' />
-                        <input type='number' placeholder='Product Price' className='form-control mt-3' />
+                        <input type='text' ref={(el) => this.name = el} placeholder='Product Name' className='form-control mt-3' />
+                        <input type='number' placeholder='Product Price' ref={(el) => this.price = el} className='form-control mt-3' />
                         <input type="file" style={{display :"none"}} ref={(el) => this.file = el} multiple="multiple" onChange={this.onChangeImageHandler} accept="image/*"/>
-                        <input type='button' onClick={() => this.file.click()} className='btn btn-info mt-3 w-100' value={this.state.images === null ? 'Upload Product Images' : this.state.images.length + " images selected"} />
-                        <input type='button' value='submit' className='btn btn-success w-100 mt-4'  />
+                        <input type='button' onClick={() => this.file.click()} className='btn btn-info mt-3 w-100' value={this.state.images === null || this.state.images.length === 0? 'Upload Product Images' : this.state.images.length + " images selected"} />
+                        <input type='button' value='submit' onClick={this.onSubmitBtnClick} className='btn btn-success w-100 mt-4'  />
                     </div>
                 </div>
             </div>
