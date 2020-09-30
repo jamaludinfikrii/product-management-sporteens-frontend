@@ -47,7 +47,7 @@ export class InsertProduct extends Component {
             if(e.target.files.length > 5) throw new Error("Only 5 Images Allowed")
             for(var i = 0 ; i < files.length ; i ++){
                 
-                if(files[i].size > 100000) throw new Error("Maximum Each image only 100kb (" + files[i].name + ') is ' + (files[i].size / 1000) + ' kb')
+                if(files[i].size > 1000000) throw new Error("Maximum Each image only 100kb (" + files[i].name + ') is ' + (files[i].size / 1000) + ' kb')
             }
 
             this.setState({images : files})
