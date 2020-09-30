@@ -19,7 +19,7 @@ export class InsertProduct extends Component {
 
             let fd = new FormData()
             data = JSON.stringify(data)
-            
+
             fd.append('data',data)
             for(var i = 0 ; i < this.state.images.length ; i ++){
                 fd.append('images',this.state.images[i])
