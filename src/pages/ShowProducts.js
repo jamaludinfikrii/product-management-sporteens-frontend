@@ -8,9 +8,9 @@ export class ShowProducts extends Component {
             status : 'unloaded'
         },
 
-        dataSelected : [
+        dataSelected : [],
 
-        ]
+        imageSelectedEdit : null
     }
     componentDidMount(){
         this.getData()
@@ -33,7 +33,10 @@ export class ShowProducts extends Component {
             console.log(err)
         })
     }
-
+    onChangeImageInput = (e) => {
+        
+        
+    }
     renderDataToJsx = () => {
         return this.state.dataProduct.data.map((val,idx) => {
             return(
@@ -45,7 +48,8 @@ export class ShowProducts extends Component {
                         <div style={{position : 'relative'}}>
                             <img style={{width : "100%" ,height : '200px' , objectFit : "cover" , objectPosition: "center"}} alt='product' src={this.state.dataSelected[idx].path} />
                             <div style={{position : "absolute",left :"0px",bottom : "0px" }} className='w-100 text-center'>
-                                <input type='button' style={{fontSize : '10px'}} className='btn btn-warning' value='Edit Image' />
+                                <input type='button' style={{fontSize : '10px'}} onClick={() => this.inputFile.click()} className='btn btn-warning' value='Edit Image' />
+                                <input type='file' style={{display : "none"}} ref={(el) => this.inputFile = el} accept="image/*" onChange={this.onChangeImageInput} />
                             </div>
                         </div>
                         
