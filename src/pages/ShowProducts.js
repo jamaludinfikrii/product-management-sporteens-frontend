@@ -6,7 +6,11 @@ export class ShowProducts extends Component {
         dataProduct : {
             data : null,
             status : 'unloaded'
-        }
+        },
+
+        dataSelected : [
+
+        ]
     }
     componentDidMount(){
         this.getData()
@@ -16,7 +20,14 @@ export class ShowProducts extends Component {
         Axios.get('http://localhost:5000/products')
         .then((res) => {
             console.log(res.data.data)
-            this.setState({dataProduct : {status : "loaded",data : res.data.data} })
+            let dataSelected = []
+            res.data.data.forEach((val,index) => {
+                dataSelected[index] = val.images[0]
+            })
+
+            console.log(dataSelected)
+
+            this.setState({dataProduct : {status : "loaded",data : res.data.data}, dataSelected : dataSelected })
         })
         .catch((err) => {
             console.log(err)
@@ -24,20 +35,38 @@ export class ShowProducts extends Component {
     }
 
     renderDataToJsx = () => {
-        return this.state.dataProduct.data.map((val) => {
+        return this.state.dataProduct.data.map((val,idx) => {
             return(
                 <div className='col-md-4 mt-5'>
                     <div className='border rounded shadow p-4'>
                         <h3 className='text-secondary'>{val.name}</h3>
                         <p className='text-danger'>Rp. {val.price}</p>
 
-                        <img style={{width : "100%" ,height : '200px' , objectFit : "cover" , objectPosition: "center"}} alt='product' src={val.images[0].path} />
+                        <div style={{position : 'relative'}}>
+                            <img style={{width : "100%" ,height : '200px' , objectFit : "cover" , objectPosition: "center"}} alt='product' src={this.state.dataSelected[idx].path} />
+                            <div style={{position : "absolute",left :"0px",bottom : "0px" }} className='w-100 text-center'>
+                                <input type='button' style={{fontSize : '10px'}} className='btn btn-warning' value='Edit Image' />
+                            </div>
+                        </div>
+                        
                         <div className='row mt-4'>
                             {
                                 val.images.map((img) => {
+                                    if(img.id === this.state.dataSelected[idx].id){
+                                        return(
+                                            <div className='col-4'>
+                                                <img style={{width : "100%" ,height : '50px' , objectFit : "cover" , objectPosition: "center",border : "2px solid red",cursor : "pointer"}} alt='product' src={img.path} />
+                                            </div>
+                                        )
+                                    }
                                     return(
                                         <div className='col-4'>
-                                            <img style={{width : "100%" ,height : '50px' , objectFit : "cover" , objectPosition: "center"}} alt='product' src={img.path} />
+                                            <img style={{width : "100%" ,height : '50px' , objectFit : "cover" , objectPosition: "center" , cursor : "pointer"}} alt='product' src={img.path} 
+                                            onClick={() => {
+                                                let dataSelected = this.state.dataSelected
+                                                dataSelected[idx] = img
+                                                this.setState({dataSelected : dataSelected})
+                                            }} />
                                         </div>
 
                                     )
@@ -71,7 +100,7 @@ export class ShowProducts extends Component {
             )
         }
 
-        if(this.state.dataProduct.status === 'loaded' && this.state.dataProduct.data.length > 0){
+        if(this.state.dataProduct.status === 'loaded' && this.state.dataProduct.data.length > 0 && this.state.dataSelected.length > 0){
             return (
                 <div className='container'>
                    <div className='row'>
